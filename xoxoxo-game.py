@@ -60,7 +60,7 @@ def print_players():
     print("👉 (Enter the input without the apostrophes.)")
 
 def get_move():
-    return input("❓ Move: ")
+    return input("❓ Move for Player {} ({}): ".format(current_player, get_player_symbol(current_player)))
 
 def is_int(val):
     try:
@@ -77,10 +77,10 @@ def user_wants_to_exit(move):
 def validate_move(move):
     move_list = list(move)
     if len(move_list) < 2:
-        print("❗ Wrong format: length of {} is lower than 2".format(move))
+        print("❗ Wrong format: length of '{}' is lower than 2".format(move))
         return False
     elif len(move_list) > 3:
-        print("❗ Wrong format: length of {} is larger than 3".format(move))
+        print("❗ Wrong format: length of '{}' is larger than 3".format(move))
         return False
     elif move_list[0] not in ROWS:
         print("❗ Wrong format: row '{}' does not exist".format(move_list[0]))
@@ -129,44 +129,133 @@ def is_game_ended():
     if is_winner(1):
         set_winner(1)
         return True
+    # Check player 2
     elif is_winner(2):
         set_winner(2)
         return True
+    elif is_board_full():
+    # Check if board is full
+        set_winner(0)
+        return True
     else:
         return False
+
+def is_board_full():
+    for r in ROWS:
+        for c in COLUMNS:
+            if board_state[r][c] == CELL_EMPTY:
+                return False
+    return True
+
 
 def is_winner(player):
     player_symbol = get_player_symbol(player)
     for r in ROWS:
         subsequent_player_symbols = 0
-        for c in COLUMNS:
-            if board_state[r][c] == player_symbol:
-                subsequent_player_symbols += 1
-                if c+4<=len(COLUMNS) and board_state[r][c+4] == player_symbol:
+        for c in COLUMNS[:-4]:
+            subsequent_player_symbols = 0
+            for i in range(4,-1,-1):
+                if board_state[r][c+i] == player_symbol:
                     subsequent_player_symbols += 1
-                    if board_state[r][c+3] == player_symbol:
-                        subsequent_player_symbols += 1
-                        if board_state[r][c+2] == player_symbol:
-                            subsequent_player_symbols += 1
-                            if board_state[r][c+1] == player_symbol:
-                                subsequent_player_symbols += 1
-                if subsequent_player_symbols == 5:
-                    return True
+            if subsequent_player_symbols == 5:
+                return True
     for c in COLUMNS:
         subsequent_player_symbols = 0
-        for r_index, r in enumerate(ROWS):
-            if board_state[r][c] == player_symbol:
-                subsequent_player_symbols += 1
-                if r_index+4<=len(ROWS) and board_state[ROWS[r_index+4]][c] == player_symbol:
+        for r_index, r in enumerate(ROWS[:-4]):
+            subsequent_player_symbols = 0
+            for i in range(4,-1,-1):
+                if board_state[ROWS[r_index+i]][c] == player_symbol:
                     subsequent_player_symbols += 1
-                    if board_state[ROWS[r_index+3]][c] == player_symbol:
-                        subsequent_player_symbols += 1
-                        if board_state[ROWS[r_index+2]][c] == player_symbol:
-                            subsequent_player_symbols += 1
-                            if board_state[ROWS[r_index+1]][c] == player_symbol:
-                                subsequent_player_symbols += 1
-                if subsequent_player_symbols == 5:
-                    return True
+            if subsequent_player_symbols == 5:
+                return True
+    # a6 b7 c8 d9 e10
+    lzipped = list(zip(ROWS[:-5], COLUMNS[5:]))
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    # a5 b6 c7 d8 e9 f10
+    lzipped = list(zip(ROWS[:-4], COLUMNS[4:]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    # ...
+    lzipped = list(zip(ROWS[:-3], COLUMNS[3:]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:-2], COLUMNS[2:]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:-1], COLUMNS[1:]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    # a1 b2 c3 d4 ... i9 j10
+    lzipped = list(zip(ROWS, COLUMNS))
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    # ...
+    lzipped = list(zip(ROWS[1:], COLUMNS[:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[2:], COLUMNS[:-2]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[3:], COLUMNS[:-3]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[4:], COLUMNS[:-4]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[5:], COLUMNS[:-5]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:5], COLUMNS[5-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:6], COLUMNS[6-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:7], COLUMNS[7-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:8], COLUMNS[8-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:9], COLUMNS[9-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[:10], COLUMNS[10-1::-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[1:10], COLUMNS[10-1:0:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[2:10], COLUMNS[10-1:2-1:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[3:10], COLUMNS[10-1:3-1:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[4:10], COLUMNS[10-1:4-1:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    lzipped = list(zip(ROWS[5:10], COLUMNS[10-1:5-1:-1]))  
+    if check_winner_by_coord_list(lzipped, player_symbol):
+        return True
+    return False
+
+def check_winner_by_coord_list(coord_list, player_symbol):
+    subsequent_player_symbols = 0
+    first_found = False
+    for r_c in coord_list:
+        if not first_found:
+            if board_state[r_c[0]][r_c[1]] == player_symbol:
+                first_found = True
+                subsequent_player_symbols += 1
+        else:
+            if board_state[r_c[0]][r_c[1]] == player_symbol:
+                subsequent_player_symbols += 1
+            else:
+                return False
+        if subsequent_player_symbols >= 5:
+            return True
     return False
 
 def set_winner(w):
@@ -183,6 +272,18 @@ def update_current_player():
 def get_player_symbol(player):
     return PLAYER_SYMBOLS[player]
 
+def print_end_message():
+    print("👉 Game is over.")
+    print()
+    print("🏆┌──────────────┐🏆")
+    print("🏆│  Game Over   │🏆")
+    if winner in [1,2]:
+        print("🏆│ Winner is: {} │🏆".format(winner))
+    else:
+        print("🏆│  Draw (tie)  │🏆")
+    print("🏆└──────────────┘🏆")
+    print()
+
 def start_game():
     print_welcome_message()
     initialize_board()
@@ -196,18 +297,11 @@ def start_game():
                 print("👋 Bye!")
                 return
             is_valid_move = validate_move(move)
+        print()
         update_board(move)
         update_current_player()
-    print("🏆 Game ended.")
-    print()
-    print("🏆🏆🏆🏆🏆🏆🏆🏆")
-    print("┌──────────────┐")
-    print("│  Game Over   │")
-    print("│ Winner is: {} │".format(winner))
-    print("└──────────────┘")
-    print("🏆🏆🏆🏆🏆🏆🏆🏆")
-    print()
     draw_board()
+    print_end_message()
     return
 
 if __name__ == "__main__":
