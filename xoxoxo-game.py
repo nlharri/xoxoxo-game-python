@@ -52,11 +52,11 @@ def format_cell_content(cell_content):
         return 'X'
 
 def print_players():
-    print("👉  Player 1: {}".format(get_player_symbol(1)))
-    print("👉  Player 2: {}".format(get_player_symbol(2)))
-    print("👉  Current player: {}".format(current_player))
-    print("👉  Select move example: 'a1' means row a, column 1. 'd7' means row d column 7.")
-    print("👉  Type 'exit' and press enter to quit the game.")
+    print("👉 Player 1: {}".format(get_player_symbol(1)))
+    print("👉 Player 2: {}".format(get_player_symbol(2)))
+    print("👉 Current player: {}".format(current_player))
+    print("👉 Select move example: 'a1' means row a, column 1. 'd7' means row d column 7.")
+    print("👉 Type 'X' and press enter to quit the game.")
     print("👉 (Enter the input without the apostrophes.)")
 
 def get_move():
@@ -70,7 +70,7 @@ def is_int(val):
     return True
 
 def user_wants_to_exit(move):
-    if move == 'exit':
+    if move == 'X' or move == 'x':
         return True
     return False
 
@@ -168,78 +168,25 @@ def is_winner(player):
                     subsequent_player_symbols += 1
             if subsequent_player_symbols == 5:
                 return True
-    # a6 b7 c8 d9 e10
-    lzipped = list(zip(ROWS[:-5], COLUMNS[5:]))
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    # a5 b6 c7 d8 e9 f10
-    lzipped = list(zip(ROWS[:-4], COLUMNS[4:]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    # ...
-    lzipped = list(zip(ROWS[:-3], COLUMNS[3:]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:-2], COLUMNS[2:]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:-1], COLUMNS[1:]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    # a1 b2 c3 d4 ... i9 j10
+    for i in range(5,0,-1):
+        lzipped = list(zip(ROWS[:-i], COLUMNS[i:]))
+        if check_winner_by_coord_list(lzipped, player_symbol):
+            return True
     lzipped = list(zip(ROWS, COLUMNS))
     if check_winner_by_coord_list(lzipped, player_symbol):
         return True
-    # ...
-    lzipped = list(zip(ROWS[1:], COLUMNS[:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[2:], COLUMNS[:-2]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[3:], COLUMNS[:-3]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[4:], COLUMNS[:-4]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[5:], COLUMNS[:-5]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:5], COLUMNS[5-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:6], COLUMNS[6-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:7], COLUMNS[7-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:8], COLUMNS[8-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:9], COLUMNS[9-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[:10], COLUMNS[10-1::-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[1:10], COLUMNS[10-1:0:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[2:10], COLUMNS[10-1:2-1:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[3:10], COLUMNS[10-1:3-1:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[4:10], COLUMNS[10-1:4-1:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    lzipped = list(zip(ROWS[5:10], COLUMNS[10-1:5-1:-1]))  
-    if check_winner_by_coord_list(lzipped, player_symbol):
-        return True
-    return False
+    for i in range(1,6):
+        lzipped = list(zip(ROWS[i:], COLUMNS[:-i]))  
+        if check_winner_by_coord_list(lzipped, player_symbol):
+            return True
+    for i in range(5,11):
+        lzipped = list(zip(ROWS[:i], COLUMNS[i-1::-1]))  
+        if check_winner_by_coord_list(lzipped, player_symbol):
+            return True
+    for i in range(1,6):
+        lzipped = list(zip(ROWS[i:10], COLUMNS[10-1:i-1:-1]))  
+        if check_winner_by_coord_list(lzipped, player_symbol):
+            return True
 
 def check_winner_by_coord_list(coord_list, player_symbol):
     subsequent_player_symbols = 0
